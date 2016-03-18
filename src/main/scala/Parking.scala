@@ -22,15 +22,15 @@ object Parking  {
     user ! "locate"
     user ! "locate"
     user ! "locate"
+    user ! "locate"
     user ! "2"
     user ! "locate"
     user ! "locate"
     user ! "5"
-    user ! "4"
     user ! "locate"
     user ! "locate"
     user ! "locate"
-    user ! "8"
+    user ! "2"
 
 
   }
@@ -52,13 +52,14 @@ class Attendant extends Actor {
 
   override def receive: Actor.Receive = {
     case "area locate " => {
-      val result = Await.result((Parking.monitor ? "allocate space") (Timeout(5 seconds)).mapTo[Int], 10.second)
-      println("seat allocated:" + result)
+      val result = (Parking.monitor ? "allocate space") (Timeout(5 seconds)).mapTo[Int]
+
+       result.map{ output => println("seat allocated:" + output)}
     }
     case loc => {
-      val result = Await.result((Parking.monitor ? loc) (Timeout(5 seconds)).mapTo[Int], 10.second)
+      val result = (Parking.monitor ? loc) (Timeout(5 seconds)).mapTo[Int]
+     result.map{output => println("slot freed : " + output)}
 
-      println(result+"freeed")
       // case loc => Parking.monitor ! loc
     }
 
